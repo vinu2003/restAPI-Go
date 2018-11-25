@@ -143,17 +143,3 @@ vinodhinis-MBP:awesomeProject vinodhinibalusamy$ curl -u test:password -X GET ht
   		"lll"
   	]
 
-IMPROVEMENTS : I prefer to implement mock tests so that i can cover some corner cases in db query which I tried and not succesfull.
-               I will try that later as side project.
-
-
-Also, Documents/articles referred : I have signed up for Cloud Native Go with dockers and kubeternes course in linkedIn and followed up most of the concepts.
-The reason is i havent written REST api using GoLang but only distributed software like JuJu.
-I have developed REST api using SPring boot JAVA. So inorder to learn Web Dev using GO for current market requirement I am pursuing that specific course.
-
-Requesting to provide any suggestions & improvements in the work I have done which will be useful for improvising my skills.
-
-Thanks
--Vinodhini
-
-
