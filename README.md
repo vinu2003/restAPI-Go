@@ -9,18 +9,18 @@ KINDLY NOTE: Assumptions are highlighted as ***ASSUMPTION***
 Directory Structure:
 --------------------
 awesomeProject/
-    |- Godeps/             - Contains info about all dependencies of the project
-    |- controller/              - Contains main API logic files
-        |- handler.go      - Defines methods handling calls at various endpoints
-        |- handler_test.go - DEfines unit tests for all handler functions
-        |- model.go        - User and Product models
-        |- dbstore.go      - Methods interacting with the database
-        |- router.go       - Defines routes and endpoints
-    |- errors/
-        |- error.go        - implements functions to manipulate errors
-    |- README.md
-    |- articledatstore.js  - Script to populate local mongodb with dummy data
-    |- main.go             - Entry point of the API
+    +-- Godeps/             - Contains info about all dependencies of the project
+    +-- controller/              - Contains main API logic files
+        +-- handler.go      - Defines methods handling calls at various endpoints
+        +-- handler_test.go - DEfines unit tests for all handler functions
+        +-- model.go        - User and Product models
+        +-- dbstore.go      - Methods interacting with the database
+        +-- router.go       - Defines routes and endpoints
+    +-- errors/
+        +-- error.go        - implements functions to manipulate errors
+    +-- README.md
+    +-- articledatstore.js  - Script to populate local mongodb with dummy data
+    +-- main.go             - Entry point of the API
 
 
 
