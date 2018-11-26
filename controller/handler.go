@@ -221,8 +221,12 @@ func (h *Handler) DeleteArticle(w http.ResponseWriter, r *http.Request) {
 	// delete from database
 	_, err = h.database.DeleteArticle(articleStruct)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Println("Error: DeleteHandler -", err.Error())
+		if strings.Contains(err.Error(), "not found") {
+			http.Error(w, err.Error(), http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 

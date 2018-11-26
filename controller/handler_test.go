@@ -278,3 +278,51 @@ func TestHandler_ArticlesHandlerDuplicateInput(t *testing.T) {
 			status, http.StatusInternalServerError)
 	}
 }
+
+
+func TestHandler_DeleteArticleInValidData(t *testing.T) {
+	data := []byte(`{"id":1,"title":"my music","date":"3000-92-40","body":"music","tags":["songs"]}`)
+
+	// first delete entry created during previous unit test execution.
+	req, err := http.NewRequest("DELETE", "http://localhost:8984/article",  bytes.NewBuffer(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.SetBasicAuth("test", "password")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+
+	Router().ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusNotFound {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusNotFound)
+	}
+}
+
+func TestHandler_DeleteArticleValidInput(t *testing.T) {
+	data := []byte(`{"id":1,"title":"","date":"2018-03-14","body":"Change in climate and vegetation","tags":["world","climate","nature"]}`)
+
+	// first delete entry created during previous unit test execution.
+	req, err := http.NewRequest("DELETE", "http://localhost:8984/article",  bytes.NewBuffer(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.SetBasicAuth("test", "password")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+
+	Router().ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+}
+
