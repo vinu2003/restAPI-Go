@@ -200,3 +200,33 @@ func (h *Handler) GetArticleByTagNameDate(w http.ResponseWriter, r *http.Request
 	result.Related_tags = unique(tagSlice)
 	writeJson(w, result)
 }
+
+func (h *Handler) DeleteArticle(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	log.Println(string(body))
+	if err != nil {
+		log.Println("Error: in adding article - ", err)
+		http.Error(w, "Error: in adding article.", http.StatusUnprocessableEntity)
+		return
+	}
+
+	var articleStruct Article
+	if err := json.Unmarshal(body, &articleStruct); err != nil {
+		log.Println("Error: ArticlesHandler - Unmarshalling data, ", err)
+		http.Error(w, "Error: ArticlesHandler - Unmarshalling data", http.StatusUnprocessableEntity)
+		return
+	}
+	log.Println(articleStruct)
+
+	// delete from database
+	_, err = h.database.DeleteArticle(articleStruct)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println("Error: DeleteHandler -", err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Deleted article successfully..."))
+}

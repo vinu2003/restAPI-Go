@@ -213,11 +213,14 @@ func TestHandler_ArticlesHandlerInValidInput(t *testing.T) {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusUnprocessableEntity)
 	}
+	//rr.Body.String()
 }
 
 func TestHandler_ArticlesHandlerValidInput(t *testing.T) {
 	data := []byte(`{"id":1,"title":"","date":"2018-03-14","body":"Change in climate and vegetation","tags":["world","climate","nature"]}`)
-	req, err := http.NewRequest("POST", "http://localhost:8984/articles",  bytes.NewBuffer(data))
+
+	// first delete entry created during previous unit test execution.
+	req, err := http.NewRequest("DELETE", "http://localhost:8984/article",  bytes.NewBuffer(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -226,6 +229,25 @@ func TestHandler_ArticlesHandlerValidInput(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 
 	rr := httptest.NewRecorder()
+
+	Router().ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// Now add article...
+	req, err = http.NewRequest("POST", "http://localhost:8984/articles",  bytes.NewBuffer(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.SetBasicAuth("test", "password")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+
+	rr = httptest.NewRecorder()
 
 	Router().ServeHTTP(rr, req)
 

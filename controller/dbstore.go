@@ -26,15 +26,15 @@ const (
 
 
 // checkDuplicate checks if record provided by user already exists in database.
-func checkDuplicate(data Article, db *mgo.Collection) bool {
+func checkDuplicate(data Article, db *mgo.Collection) (bool, int ,error) {
 	r := Article{}
 	pipeline := []bson.M{{"$match":bson.M{"date":data.Date}},{"$match":bson.M{"title":data.Title}},{"$match":bson.M{"body":data.Body}},{"$match":bson.M{"tags": bson.M{"$in":data.Tags}}}}
 	err := db.Pipe(pipeline).One(&r)
 	if err != nil && strings.Contains(err.Error(), "not found") {
-			log.Println("INFO: Record does not exist, ", err)
-			return false
+			log.Println("INFO: Article does not exist, ", err)
+			return false, -1, err
 	}
-	return true
+	return true, r.ID, err
 }
 
 // AddArticles insert the record into datbase - POST METHOD.
@@ -49,10 +49,11 @@ func (d Database) AddArticle(data Article) (int, error) {
 	db := session.DB(DBNAME).C(COLLECTION)
 
 	// first verify if the entry provided is duplicate.
-	isExists := checkDuplicate(data, db)
+	isExists, id, err := checkDuplicate(data, db)
 	if isExists {
 		log.Println("Info: Data enter already exists in database, \n",data)
-		return -1, errors.New("Info: Data enter already exists in database")
+		//no need get the err here - it is nil if isExists is true.
+		return -1, errors.New(fmt.Sprintf("Info: Article already exists in database, %d", id))
 	}
 
 	numRec, err := db.Count()
@@ -119,4 +120,31 @@ func (d Database) GetArticleByTagDate(tagStr, dateStr string) (ArticlesArr, erro
 		return result, errors.New(fmt.Sprintf("Error: Failed to retrive the articles for date&Tag, %v", err))
 	}
 	return result, nil
+}
+
+// DeleteArticle deletes article entry from databse
+func (d Database) DeleteArticle(data Article) (bool, error) {
+	session, err := mgo.Dial("localhost:27017")
+	if err != nil {
+		return false, errors.New(fmt.Sprintf("Error: Failed to establish connection to mongoDB server, %v", err))
+	}
+	defer session.Close()
+
+	session.SetSafe(&mgo.Safe{})
+	db := session.DB(DBNAME).C(COLLECTION)
+
+	// first verify if the entry provided is duplicate.
+	isExists, id, err := checkDuplicate(data, db)
+	if !isExists {
+		log.Println("Error: Data enter not found in database, \n",data)
+		return false, errors.New(fmt.Sprintf("Error: Data enter not found in database, %v", err))
+	}
+
+	err = db.RemoveId(id)
+	if err != nil {
+		return false, errors.New(fmt.Sprintf("Error: removing the article, %v", err))
+	}
+	// reach here if deleted the entry successfully
+	log.Println("Successfully removed the article with id: ", id)
+	return true, nil
 }
