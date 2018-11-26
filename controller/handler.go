@@ -21,6 +21,7 @@ const (
 	username = "test"
 	password = "password"
 )
+
 type Handler struct {
 	database Database
 }
@@ -88,7 +89,7 @@ func (h *Handler) ArticlesHandler(w http.ResponseWriter, r *http.Request) {
 	var articleStruct Article
 	if err := json.Unmarshal(body, &articleStruct); err != nil {
 		log.Println("Error: ArticlesHandler - Unmarshalling data, ", err)
-		http.Error(w, "Error: ArticlesHandler - Unmarshalling data", http.StatusUnprocessableEntity)
+		http.Error(w, "Error: ArticlesHandler - Unmarshalling data"+" : "+err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 	log.Println(articleStruct)
@@ -166,7 +167,7 @@ func (h *Handler) GetArticleByTagNameDate(w http.ResponseWriter, r *http.Request
 		return
 	}
 	dateRune := []rune(dateInfo)
-	date := string(dateRune[:4])+"-"+string(dateRune[4:6])+"-"+string(dateRune[6:])
+	date := string(dateRune[:4]) + "-" + string(dateRune[4:6]) + "-" + string(dateRune[6:])
 	log.Println(date)
 
 	articles, err := h.database.GetArticleByTagDate(tagName, date)
@@ -178,7 +179,7 @@ func (h *Handler) GetArticleByTagNameDate(w http.ResponseWriter, r *http.Request
 
 	// fill in the ArticleTagDate model.
 	var result ArticleTagDate
-	result.Tag   = tagName
+	result.Tag = tagName
 	result.Count = len(articles)
 	var ct int = 0
 	for i := range articles {

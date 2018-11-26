@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/handlers"
 )
 
-func main()  {
+func main() {
 	r := controller.Router()
 	log.Fatal(http.ListenAndServe(port(), handlers.CORS()(r)))
 }
