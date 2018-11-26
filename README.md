@@ -84,16 +84,6 @@ unit tests:
 Implemented simple unit test frame work for validality handlers.
 10 test case are implemented:
 
-***ASSUMPTION***
-for the above mentioned duplicate entries not allowed to be inserted, rerunning the unit test can have issue with 2 test cases
-@@line218 TestHandler_ArticlesHandlerValidInput
-@@line239 TestHandler_ArticlesHandlerDuplicateInput
-  - what needs to be done ?
-      make sure the data variable which has JSON input is slightly modified in ''both cases'' for each run.
-      @@line218&240: data := []byte(`{"id":1,"title":"","date":"2018-03-14","body":"Change in climate and vegetation","tags":["world","climate","nature"]}`)
-
-      WORKAROUND is implement DELETE method to lookup for match and delete which is not yet implemented as it is out of scope of this task.
-
 Error handling:
 Knowing that go doesnt have rich error handling mechanism, I tried to see how its done in case web based projects.
 I prefer not to aggregate error status as one handler(which is most commonly used)  rather each handler have in their own method.
